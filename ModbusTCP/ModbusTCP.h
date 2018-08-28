@@ -1,34 +1,32 @@
 /*
-    ModbusIP.h - Header for Modbus IP Library
+    ModbusTCP.h - Header for Modbus IP Library
     Copyright (C) 2015 André Sarmento Barbosa
 */
-#include <Arduino.h>
+#include "mbed.h"
+#include "EthernetInterface.h"
+#include "TCPServer.h"
+#include "TCPSocket.h"
 #include <Modbus.h>
-#include <SPI.h>
-#include <Ethernet.h>
 
-#ifndef MODBUSIP_H
-#define MODBUSIP_H
+#ifndef MODBUSTCP_H
+#define MODBUSTCP_H
 
-#define MODBUSIP_PORT 	  502
-#define MODBUSIP_MAXFRAME 200
+#define MODBUSTCP_PORT 	  502
+#define MODBUSTCP_MAXFRAME 200
 
 //#define TCP_KEEP_ALIVE
 
-class ModbusIP : public Modbus {
+class ModbusTCP : public Modbus {
     private:
-        EthernetServer _server;
+        TCPServer _server;
+        TCPSocket client_sock;
+        SocketAddress client_addr;
         byte _MBAP[7];
 
     public:
-        ModbusIP();
-        void config(uint8_t *mac);
-        void config(uint8_t *mac, IPAddress ip);
-        void config(uint8_t *mac, IPAddress ip, IPAddress dns);
-        void config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway);
-        void config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet);
+        ModbusTCP(EthernetInterface _eth);
         void task();
 };
 
-#endif //MODBUSIP_H
+#endif //MODBUSTCP_H
 

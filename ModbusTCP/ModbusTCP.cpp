@@ -1,41 +1,20 @@
 /*
-    ModbusIP.cpp - Source for Modbus IP Library
+    ModbusTCP.cpp - Source for Modbus IP Library
     Copyright (C) 2015 André Sarmento Barbosa
 */
-#include "ModbusIP.h"
+#include "ModbusTCP.h"
 
-ModbusIP::ModbusIP():_server(MODBUSIP_PORT) {
+ModbusTCP::ModbusTCP(EthernetInterface _eth) {
+    _server.open(&_eth);
+    _server.bind(_eth.get_ip_address(),MODBUSTCP_PORT);
+    _server.listen(5);
 }
 
-void ModbusIP::config(uint8_t *mac) {
-    Ethernet.begin(mac);
-    _server.begin();
-}
+void ModbusTCP::task() {
+    // EthernetClient client = _server.available();
+    nsapi_error_t _serverStatus _server.accept(&client_sock, &client_addr);
 
-void ModbusIP::config(uint8_t *mac, IPAddress ip) {
-    Ethernet.begin(mac, ip);
-    _server.begin();
-}
-
-void ModbusIP::config(uint8_t *mac, IPAddress ip, IPAddress dns) {
-    Ethernet.begin(mac, ip, dns);
-    _server.begin();
-}
-
-void ModbusIP::config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway) {
-    Ethernet.begin(mac, ip, dns, gateway);
-    _server.begin();
-}
-
-void ModbusIP::config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet) {
-    Ethernet.begin(mac, ip, dns, gateway, subnet);
-    _server.begin();
-}
-
-void ModbusIP::task() {
-    EthernetClient client = _server.available();
-
-    if (client) {
+    if (_serverStatus == NSAPI_ERROR_OK ) {
         if (client.connected()) {
             int i = 0;
             while (client.available()){
@@ -46,8 +25,8 @@ void ModbusIP::task() {
             _len = _MBAP[4] << 8 | _MBAP[5];
             _len--;  // Do not count with last byte from MBAP
 
-            if (_MBAP[2] !=0 || _MBAP[3] !=0) return;   //Not a MODBUSIP packet
-            if (_len > MODBUSIP_MAXFRAME) return;      //Length is over MODBUSIP_MAXFRAME
+            if (_MBAP[2] !=0 || _MBAP[3] !=0) return;   //Not a MODBUSTCP packet
+            if (_len > MODBUSTCP_MAXFRAME) return;      //Length is over MODBUSTCP_MAXFRAME
 
             _frame = (byte*) malloc(_len);
             i = 0;

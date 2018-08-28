@@ -1,17 +1,14 @@
-/*
-    Modbus.h - Header for Modbus Base Library
-    Copyright (C) 2014 André Sarmento Barbosa
-*/
-#include "Arduino.h"
-
 #ifndef MODBUS_H
 #define MODBUS_H
+
+#include "mbed.h"
 
 #define MAX_REGS     32
 #define MAX_FRAME   128
 //#define USE_HOLDING_REGISTERS_ONLY
 
 typedef unsigned int u_int;
+typedef uint16_t word;
 
 //Function Codes
 enum {
