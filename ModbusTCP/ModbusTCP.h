@@ -24,7 +24,7 @@ class ModbusTCP : public Modbus {
         byte _MBAP[7];
 
     public:
-        ModbusTCP(EthernetInterface _eth);
+        ModbusTCP(EthernetInterface* _eth);
         void task();
 };
 
